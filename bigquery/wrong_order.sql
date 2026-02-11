@@ -6,7 +6,7 @@ config {
     name:"ChatHist"
   }],
 }
-
+-- this query returns records where the order of status is incorrect. the query calculates the previous status for each row and checks where the previous status aligns with the correct order of statuses i.e. sent before delivered and delivered before read.
 WITH ordered AS (
   SELECT
     message_uuid,

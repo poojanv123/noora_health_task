@@ -5,49 +5,41 @@ This project implements an end-to-end data pipeline for analyzing data for the W
 Architecture Overview
 
 The pipeline consists of three main stages:
-Data Ingestion – Google Sheets → BigQuery (via Airbyte)
-Data Transformation & Validation – BigQuery Pipeline
+Data Ingestion – Google Sheets → BigQuery (via Airbyte), 
+Data Transformation & Validation – BigQuery Pipeline,
 Visualization & Reporting – Looker Studio
 
 1. Data Ingestion
 
-Raw WhatsApp messages and status data are assumed to be exported from the application into Google Sheets.
-Data is loaded into BigQuery using Airbyte:
-Source: Google Sheets
-Destination: BigQuery dataset
-Tool: Airbyte
-Refresh Frequency: Every 24 hours
-This results in two raw tables in BigQuery: messages and statuses
+Assuming data is collected from the app into Google Sheets, the raw data is loaded into BigQuery dataset using Airbyte where Source: Google Sheets, Destination: BigQuery dataset, and Refresh Frequency: Every 24 hours. This results in two raw tables in BigQuery: messages and statuses.
 
 2. BigQuery Transformation & Validation Pipeline
 
-A BigQuery pipeline combines the raw tables into a cleaned analytical dataset and performs multiple data quality checks.
+A BigQuery pipeline combines the raw tables into a cleaned analytical dataset and performs multiple data quality checks. This pipeline runs every 24 hours to combine the updated raw data and perform data validation checks. If any of the assertion returns values, the pipeline fails.
 <img width="1279" height="278" alt="image" src="https://github.com/user-attachments/assets/667b94df-fbba-4c88-8584-f6b9214b7703" />
 
 2.1 Combined Dataset Creation (ChatHist)
-A unified table ChatHist is created by:
-Joining messages and statuses on message_id
-Parsing datetime columns into proper TIMESTAMP format
-Adding derived fields: has_failed: Boolean flag indicating failed messages and hr_to_read: Time difference (in hours) between sent status and read status for a message. These fields are required for visualizations.
+
+A unified table ChatHist is created by: Joining messages and statuses on message_id, parsing datetime columns into proper TIMESTAMP format and addding two derived fields: has_failed: Boolean flag indicating failed messages and hr_to_read: Time difference (in hours) between sent status and read status for a message. These fields are required for visualizations.
 This table serves as the analytical base for reporting and validation.
 
 2.2 Data Validation Checks
 
 The following data quality validations are executed as part of the pipeline:
 
-1. check_duplicates
+1. check_duplicates:
 Identifies near-duplicate records where content values are identical and inserted_at timestamps are within 2 minutes of each other
 
-2. check_datetime_format
+2. check_datetime_format:
 Flags records where message_inserted_at is NULL after parsing to detect rows with improperly formatted datetime strings that failed timestamp conversion.
 
-3. duplicate_status
-Identifies messages that have the same status associated multiple times to ensure status transitions are unique and not duplicated.
+3. duplicate_status:
+Identifies messages that have the same status associated with them multiple times to ensure status transitions are unique and not duplicated.
 
-4. missing_prev_status
+4. missing_prev_status:
 Identifies messages with missing prerequisite statuses such as delivered without prior sent and read without prior delivered
 
-5. wrong_order
+5. wrong_order:
 Flags messages where status transitions occur in incorrect order such as sent after delivered and delivered after read
 
 3. Visualization using Looker Studio

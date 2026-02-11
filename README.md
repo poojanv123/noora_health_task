@@ -60,7 +60,7 @@ Number of total users (calculated by creating a new column that copies value fro
 
 Fraction of non-failed outbound messages that were read:
 
-\frac{ \text{Distinct message_id where direction = outbound AND status = 'read' AND has_failed = FALSE} }{ \text{Distinct message_id where direction = outbound AND has_failed = FALSE} }
+{Distinct message_id where direction = outbound AND status = 'read' AND has_failed = FALSE} }{Distinct message_id where direction = outbound AND has_failed = FALSE}
 
 3.3 Time to Read Distribution
 A histogram is generated for hr_to_read with filter for direction = outbound

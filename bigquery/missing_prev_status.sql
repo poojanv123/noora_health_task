@@ -6,6 +6,7 @@ config {
     name:"ChatHist"
   }],
 }
+-- this query first calculates the previous status for each row of the table and checks where a correct previous status recorded exists for each row i.e. sent before delivered and delivered before read. This query returns rows where the correct previous status is missing
 WITH ordered AS (
   SELECT
     message_uuid,

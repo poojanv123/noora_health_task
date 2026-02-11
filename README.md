@@ -53,6 +53,7 @@ Flags messages where status transitions occur in incorrect order such as sent af
 3. Visualization using Looker Studio
 
 The cleaned ChatHist table is connected to a Looker Studio report for dashboarding and analysis. The looker report can be found [here](https://lookerstudio.google.com/u/0/reporting/21d3dd29-f8b9-4a36-8361-984111d8a324/page/2REoF/edit).
+
 3.1 Users Overview (2023)
 Number of total users (calculated by creating a new column that copies value from masked_addressee for outbound messages and from masked_from_addr for inbound messages and takes distinct count of values of this new column) and number of active users (calculated by taking distinct count of masked_from_addr for inbound messages) by month for year 2023 (since data for recent years is not available)
 

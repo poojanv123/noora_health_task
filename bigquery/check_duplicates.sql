@@ -6,6 +6,7 @@ config {
     name:"ChatHist"
   }]
 }
+-- this query joins the data table with itself on content to get rows with identical content and filter for difference in inserted_at time less than 2 minutes to get near duplicate records
 SELECT
   a.message_id AS message_id_a,
   b.message_id AS message_id_b,
